@@ -1,0 +1,28 @@
+{
+  "name": "blogging-site-mini-project-requirement",
+  "version": "1.0.0",
+  "description": "- Author Model\r ```\r { fname: { mandatory}, lname: {mandatory}, title: {mandatory, enum[Mr, Mrs, Miss]}, email: {mandatory, valid email, unique}, password: {mandatory} }\r ```\r - Blogs Model\r ```\r { title: {mandatory}, body: {mandatory}, authorId: {mandatory, refs to author model}, tags: {array of string}, category: {string, mandatory, examples: [technology, entertainment, life style, food, fashion]}, subcategory: {array of string, examples[technology-npx nodemon innt, mobile development, AI, ML etc]] }, createdAt, updatedAt, deletedAt: {when the document is deleted}, isDeleted: {boolean, default: false}, publishedAt: {when the blog is published}, isPublished: {boolean, default: false}}\r ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Duttji1996/Blogging-Site-Mini-Project-Requirement.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Duttji1996/Blogging-Site-Mini-Project-Requirement/issues"
+  },
+  "homepage": "https://github.com/Duttji1996/Blogging-Site-Mini-Project-Requirement#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.4",
+    "mongoose-type-email": "^1.1.2",
+    "nodemon": "^2.0.16"
+  }
+}
