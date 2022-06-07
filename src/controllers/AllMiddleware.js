@@ -2,6 +2,19 @@ const AuthorModel = require('../models/authorModel')
 const BloggerModel = require('../models/blogModel')
 const jwt = require('jsonwebtoken')
 
+//-----------------------regex ------------------------------------------//
+
+let emailCheck= /^[A-Za-z_.0-9]{2,}@[A-Za-z]{2,12}[.]{1}[A-Za-z.]{2,5}$/
+
+//------------------------------------------------------------------------//
+const mongoose = require('mongoose')
+
+const isValidObjectId = function (ObjectId) {
+    return mongoose.Types.ObjectId.isValid(ObjectId)
+}
+
+//-------------------------------------------------------------------------//
+
 
 
 // Phase 2nd Problem 1
@@ -9,8 +22,6 @@ const jwt = require('jsonwebtoken')
 const login = async function (req, res) {
     try {
         let body = req.body
-
-        let emailCheck= /^[A-Za-z_.0-9]{2,}@[A-Za-z]{2,12}[.]{1}[A-Za-z.]{2,5}$/
 
         if (Object.keys(body).length === 0) {
             return res.status(400).send({ Status: false, msg: "No data Found into body" })
@@ -38,7 +49,6 @@ const login = async function (req, res) {
 
             author_id: authorization._id,
             
-
         }, "Functionup-Team52")
 
         res.setHeader("x-api-key", author_token)    /// i have to ask this one
@@ -62,21 +72,16 @@ const authentication = async function (req, res, next) {
             return res.status(400).send({ Status: false, msg: "Token is not present" })
         }
 
-        try {
-            let DecodeToken = jwt.verify(author_token, "Functionup-Team52")
-            
-            if(DecodeToken){
-                req.AuthorId=DecodeToken.author_id
-                next()
+        //---------------------token verification ------------------------------------------//
+        jwt.verify(author_token,"Functionup-Team52",{ ignoreExpiration: true },function (err, decoded) {
+            if (err) {
+                return res.status(400).send({status : false, meessage : "token invalid"})
             }
-            else{
-                return res.status(400).send({ Status: false, msg: "Token could not verify" })
-            }
-         
-        }
-        catch (err) {
-            return res.status(400).send({ Status: false, msg: "you have entered a wrong token" })
-        }
+            else {
+                req.AuthorId = decoded.author_id;
+                return next();
+            }});
+        //---------------------------------------------------------------------------------------//
     }
     catch (err) {
         return res.status(500).send({ msg: "Error", error: err.message })
@@ -90,13 +95,10 @@ const authorization = async function (req, res, next) {
         let blogId=req.params.blogId
         let AuthorToken=req.AuthorId
 
-        if(!blogId){
-            return res.status(400).send({ Status: false, msg: "Please enter a blog Id into params" })
+        if(!isValidObjectId(blogId)){
+            return res.status(400).send({ Status: false, msg: "Please enter valid blogId" })
         }
-        if(blogId.length !=24){
-            return res.status(400).send({ Status: false, msg: "Please enter 24 digit's lenght of blog Id into params" })
-        }
-
+      
         let bloggerVerification = await BloggerModel.findById(blogId)
 
         if (!bloggerVerification) {
@@ -107,15 +109,12 @@ const authorization = async function (req, res, next) {
 
         if (AuthorDetail) {
             if(AuthorToken != AuthorDetail._id){
-                return res.status(400).send({ Status: false, msg: "You are not authorise person, please use exact token" })
+                return res.status(401).send({ Status: false, msg: "unauthorized access" })
             }
-            else{
-                next()
-            }
+                return next()
         }
-        else{
-            return res.status(400).send({ Status: false, msg: "Author Id not found with given blog" })  
-        }
+        
+        return res.status(400).send({ Status: false, msg: "Author Id not found with given blog" })  
     }
     catch (err) {
         return res.status(500).send({ Status: false, msg: err.message })

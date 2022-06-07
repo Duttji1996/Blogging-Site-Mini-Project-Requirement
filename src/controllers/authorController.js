@@ -1,5 +1,15 @@
 const AuthorModel = require("../models/authorModel")
 
+
+//-------------------regex validation -------------------------------//
+
+let StringCheckWihoutSpace = /^[A-Za-z]{1,}$/
+let StringAllowwithSpace = /^[A-Z a-z]{1,}$/
+let emailCheck = /^[A-Za-z_.0-9]{2,}@[A-Za-z]{2,12}[.]{1}[A-Za-z.]{2,5}$/
+
+
+//----------------------------------------------------------------------//
+
 // Problem 1
 
 const AuthorCreate = async function (req, res) {
@@ -25,13 +35,8 @@ const AuthorCreate = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Password is required" })
         }
 
-        // Regex in Validation
-        // regex
-
-        let StringCheckWihoutSpace = /^[A-Za-z]{1,}$/
-        let StringAllowwithSpace = /^[A-Z a-z]{1,}$/
-        let emailCheck = /^[A-Za-z_.0-9]{2,}@[A-Za-z]{2,12}[.]{1}[A-Za-z.]{2,5}$/
-
+        //------------------------------Regex in Validation-----------------------------------------//
+        
         if (!StringAllowwithSpace.test(body.fname)) {
             return res.status(400).send({ Status: false, msg: " fname: No Special Character allowed" })
         }
